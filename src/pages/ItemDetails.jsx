@@ -1,13 +1,43 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation, Link } from "react-router-dom";
+import axios from "axios";
 import EthImage from "../images/ethereum.svg";
-import { Link } from "react-router-dom";
-import AuthorImage from "../images/author_thumbnail.jpg";
-import nftImage from "../images/nftImage.jpg";
+
+const Skeleton = ({ w, h, circle }) => (
+  <div
+    style={{
+      width: w,
+      height: h,
+      borderRadius: circle ? "50%" : 4,
+      background: "#ddd",
+      marginBottom: 8,
+    }}
+  />
+);
 
 const ItemDetails = () => {
+  const { search } = useLocation();
+  const nftId = new URLSearchParams(search).get("nftId");
+
+  const [item, setItem] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+    if (!nftId) {
+      setLoading(false);
+      return;
+    }
+    axios
+      .get(
+        `https://us-central1-nft-cloud-functions.cloudfunctions.net/itemDetails?nftId=${nftId}`
+      )
+      .then((res) => {
+        setItem(res.data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [nftId]);
 
   return (
     <div id="wrapper">
@@ -17,68 +47,104 @@ const ItemDetails = () => {
           <div className="container">
             <div className="row">
               <div className="col-md-6 text-center">
-                <img
-                  src={nftImage}
-                  className="img-fluid img-rounded mb-sm-30 nft-image"
-                  alt=""
-                />
+                {loading ? (
+                  <Skeleton w="100%" h={400} />
+                ) : (
+                  <img
+                    src={item?.nftImage}
+                    className="img-fluid img-rounded mb-sm-30 nft-image"
+                    alt=""
+                  />
+                )}
               </div>
+
               <div className="col-md-6">
                 <div className="item_info">
-                  <h2>Rainbow Style #194</h2>
+                  {loading ? (
+                    <Skeleton w={240} h={32} />
+                  ) : (
+                    <h2>{item?.title}</h2>
+                  )}
 
                   <div className="item_info_counts">
                     <div className="item_info_views">
                       <i className="fa fa-eye"></i>
-                      100
+                      {loading ? "..." : item?.views}
                     </div>
                     <div className="item_info_like">
                       <i className="fa fa-heart"></i>
-                      74
+                      {loading ? "..." : item?.likes}
                     </div>
                   </div>
-                  <p>
-                    doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
-                    illo inventore veritatis et quasi architecto beatae vitae
-                    dicta sunt explicabo.
-                  </p>
+
+                  {loading ? (
+                    <Skeleton w="90%" h={60} />
+                  ) : (
+                    <p>{item?.description}</p>
+                  )}
+
                   <div className="d-flex flex-row">
                     <div className="mr40">
                       <h6>Owner</h6>
                       <div className="item_author">
                         <div className="author_list_pp">
-                          <Link to="/author">
-                            <img className="lazy" src={AuthorImage} alt="" />
-                            <i className="fa fa-check"></i>
-                          </Link>
+                          {loading ? (
+                            <Skeleton w={50} h={50} circle />
+                          ) : (
+                            <Link to={`/author?authorId=${item?.ownerId}`}>
+                              <img className="lazy" src={item?.ownerImage} alt="" />
+                              <i className="fa fa-check"></i>
+                            </Link>
+                          )}
                         </div>
                         <div className="author_list_info">
-                          <Link to="/author">Monica Lucas</Link>
+                          {loading ? (
+                            <Skeleton w={100} h={14} />
+                          ) : (
+                            <Link to={`/author?authorId=${item?.ownerId}`}>
+                              {item?.ownerName}
+                            </Link>
+                          )}
                         </div>
                       </div>
                     </div>
-                    <div></div>
                   </div>
+
                   <div className="de_tab tab_simple">
                     <div className="de_tab_content">
                       <h6>Creator</h6>
                       <div className="item_author">
                         <div className="author_list_pp">
-                          <Link to="/author">
-                            <img className="lazy" src={AuthorImage} alt="" />
-                            <i className="fa fa-check"></i>
-                          </Link>
+                          {loading ? (
+                            <Skeleton w={50} h={50} circle />
+                          ) : (
+                            <Link to={`/author?authorId=${item?.creatorId}`}>
+                              <img className="lazy" src={item?.creatorImage} alt="" />
+                              <i className="fa fa-check"></i>
+                            </Link>
+                          )}
                         </div>
                         <div className="author_list_info">
-                          <Link to="/author">Monica Lucas</Link>
+                          {loading ? (
+                            <Skeleton w={100} h={14} />
+                          ) : (
+                            <Link to={`/author?authorId=${item?.creatorId}`}>
+                              {item?.creatorName}
+                            </Link>
+                          )}
                         </div>
                       </div>
                     </div>
+
                     <div className="spacer-40"></div>
                     <h6>Price</h6>
                     <div className="nft-item-price">
                       <img src={EthImage} alt="" />
-                      <span>1.85</span>
+                      {loading ? (
+                        <Skeleton w={60} h={20} />
+                      ) : (
+                        <span>{item?.price}</span>
+                      )}
                     </div>
                   </div>
                 </div>
