@@ -18,9 +18,9 @@ const CountdownTimer = ({ expiryDate }) => {
   const [timeLeft, setTimeLeft] = useState(calcTimeLeft());
 
   useEffect(() => {
-    const timer = setInterval(() => setTimeLeft(calcTimeLeft()), 1000);
+    const timer = setInterval(() => setTimeLeft(calcTimeLeft()), 1000); // eslint-disable-line react-hooks/exhaustive-deps
     return () => clearInterval(timer);
-  }, [expiryDate]);
+  }, [expiryDate]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!timeLeft) return null;
   return (
