@@ -4,7 +4,7 @@ A fully responsive NFT marketplace built as part of the [Frontend Simplified](ht
 
 ## Live Demo
 
-> Add your Vercel URL here after deployment
+**[https://nft-marketplace-starter.vercel.app](https://nft-marketplace-starter.vercel.app)**
 
 ## What's Inside
 
