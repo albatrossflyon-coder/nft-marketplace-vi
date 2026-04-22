@@ -1,18 +1,27 @@
 import React, { useEffect, useState } from "react";
 import EthImage from "../images/ethereum.svg";
-import { Link } from "react-router-dom";
-import AuthorImage from "../images/author_thumbnail.jpg";
-import nftImage from "../images/nftImage.jpg";
+import { Link, useSearchParams } from "react-router-dom";
 import Skeleton from "../components/UI/Skeleton";
+import axios from "axios";
 
 const ItemDetails = () => {
+  const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [searchParams] = useSearchParams();
+  const nftId = searchParams.get("nftId");
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const timer = setTimeout(() => setLoading(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
+    axios
+      .get(
+        `https://us-central1-nft-cloud-functions.cloudfunctions.net/itemDetails?id=${nftId}`
+      )
+      .then((res) => {
+        setItem(res.data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [nftId]);
 
   return (
     <div id="wrapper">
@@ -26,7 +35,7 @@ const ItemDetails = () => {
                   <Skeleton width="100%" height="350px" borderRadius="10px" />
                 ) : (
                   <img
-                    src={nftImage}
+                    src={item?.nftImage}
                     className="img-fluid img-rounded mb-sm-30 nft-image"
                     alt=""
                   />
@@ -60,15 +69,13 @@ const ItemDetails = () => {
                         </div>
                       </div>
                       <div className="de_tab tab_simple" style={{ marginTop: "24px" }}>
-                        <div className="de_tab_content">
-                          <Skeleton width="60px" height="14px" borderRadius="4px" />
-                          <div className="item_author" style={{ marginTop: "8px" }}>
-                            <div className="author_list_pp">
-                              <Skeleton width="50px" height="50px" borderRadius="50%" />
-                            </div>
-                            <div className="author_list_info" style={{ marginLeft: "60px" }}>
-                              <Skeleton width="100px" height="14px" borderRadius="4px" />
-                            </div>
+                        <Skeleton width="60px" height="14px" borderRadius="4px" />
+                        <div className="item_author" style={{ marginTop: "8px" }}>
+                          <div className="author_list_pp">
+                            <Skeleton width="50px" height="50px" borderRadius="50%" />
+                          </div>
+                          <div className="author_list_info" style={{ marginLeft: "60px" }}>
+                            <Skeleton width="100px" height="14px" borderRadius="4px" />
                           </div>
                         </div>
                         <div className="spacer-40"></div>
@@ -80,51 +87,50 @@ const ItemDetails = () => {
                     </>
                   ) : (
                     <>
-                      <h2>Rainbow Style #194</h2>
+                      <h2>{item?.title}</h2>
                       <div className="item_info_counts">
                         <div className="item_info_views">
                           <i className="fa fa-eye"></i>
-                          100
+                          {item?.views}
                         </div>
                         <div className="item_info_like">
                           <i className="fa fa-heart"></i>
-                          74
+                          {item?.likes}
                         </div>
                       </div>
-                      <p>
-                        doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
-                        illo inventore veritatis et quasi architecto beatae vitae
-                        dicta sunt explicabo.
-                      </p>
+                      <p>{item?.description}</p>
                       <div className="d-flex flex-row">
                         <div className="mr40">
                           <h6>Owner</h6>
                           <div className="item_author">
                             <div className="author_list_pp">
-                              <Link to="/author">
-                                <img className="lazy" src={AuthorImage} alt="" />
+                              <Link to={`/author?authorId=${item?.ownerId}`}>
+                                <img className="lazy" src={item?.ownerImage} alt="" />
                                 <i className="fa fa-check"></i>
                               </Link>
                             </div>
                             <div className="author_list_info">
-                              <Link to="/author">Monica Lucas</Link>
+                              <Link to={`/author?authorId=${item?.ownerId}`}>
+                                {item?.ownerName}
+                              </Link>
                             </div>
                           </div>
                         </div>
-                        <div></div>
                       </div>
                       <div className="de_tab tab_simple">
                         <div className="de_tab_content">
                           <h6>Creator</h6>
                           <div className="item_author">
                             <div className="author_list_pp">
-                              <Link to="/author">
-                                <img className="lazy" src={AuthorImage} alt="" />
+                              <Link to={`/author?authorId=${item?.creatorId}`}>
+                                <img className="lazy" src={item?.creatorImage} alt="" />
                                 <i className="fa fa-check"></i>
                               </Link>
                             </div>
                             <div className="author_list_info">
-                              <Link to="/author">Monica Lucas</Link>
+                              <Link to={`/author?authorId=${item?.creatorId}`}>
+                                {item?.creatorName}
+                              </Link>
                             </div>
                           </div>
                         </div>
@@ -132,7 +138,7 @@ const ItemDetails = () => {
                         <h6>Price</h6>
                         <div className="nft-item-price">
                           <img src={EthImage} alt="" />
-                          <span>1.85</span>
+                          <span>{item?.price}</span>
                         </div>
                       </div>
                     </>
