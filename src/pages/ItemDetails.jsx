@@ -14,7 +14,7 @@ const ItemDetails = () => {
     window.scrollTo(0, 0);
     axios
       .get(
-        `https://us-central1-nft-cloud-functions.cloudfunctions.net/itemDetails?id=${nftId}`
+        `https://us-central1-nft-cloud-functions.cloudfunctions.net/itemDetails?nftId=${nftId}`
       )
       .then((res) => {
         setItem(res.data);

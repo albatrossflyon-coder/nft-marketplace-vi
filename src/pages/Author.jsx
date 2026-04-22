@@ -15,7 +15,7 @@ const Author = () => {
   useEffect(() => {
     axios
       .get(
-        `https://us-central1-nft-cloud-functions.cloudfunctions.net/author?author=${authorId}`
+        `https://us-central1-nft-cloud-functions.cloudfunctions.net/authors?author=${authorId}`
       )
       .then((res) => {
         setAuthor(res.data);
@@ -71,7 +71,7 @@ const Author = () => {
                               {author?.authorName}
                               <span className="profile_username">{author?.tag}</span>
                               <span id="wallet" className="profile_wallet">
-                                {author?.wallet}
+                                {author?.address}
                               </span>
                               <button id="btn_copy" title="Copy Text">
                                 Copy
@@ -107,7 +107,12 @@ const Author = () => {
 
               <div className="col-md-12">
                 <div className="de_tab tab_simple">
-                  <AuthorItems loading={loading} nftCollection={author?.nftCollection} />
+                  <AuthorItems
+                    loading={loading}
+                    nftCollection={author?.nftCollection}
+                    authorId={author?.authorId}
+                    authorImage={author?.authorImage}
+                  />
                 </div>
               </div>
             </div>
