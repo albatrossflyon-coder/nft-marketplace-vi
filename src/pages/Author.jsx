@@ -1,10 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AuthorBanner from "../images/author_banner.jpg";
 import AuthorItems from "../components/author/AuthorItems";
 import { Link } from "react-router-dom";
 import AuthorImage from "../images/author_thumbnail.jpg";
+import Skeleton from "../components/UI/Skeleton";
 
 const Author = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div id="wrapper">
       <div className="no-bottom no-top" id="content">
@@ -25,29 +33,57 @@ const Author = () => {
                 <div className="d_profile de-flex">
                   <div className="de-flex-col">
                     <div className="profile_avatar">
-                      <img src={AuthorImage} alt="" />
+                      {loading ? (
+                        <Skeleton width="150px" height="150px" borderRadius="50%" />
+                      ) : (
+                        <img src={AuthorImage} alt="" />
+                      )}
 
-                      <i className="fa fa-check"></i>
+                      {!loading && <i className="fa fa-check"></i>}
+
                       <div className="profile_name">
                         <h4>
-                          Monica Lucas
-                          <span className="profile_username">@monicaaaa</span>
-                          <span id="wallet" className="profile_wallet">
-                            UDHUHWudhwd78wdt7edb32uidbwyuidhg7wUHIFUHWewiqdj87dy7
-                          </span>
-                          <button id="btn_copy" title="Copy Text">
-                            Copy
-                          </button>
+                          {loading ? (
+                            <>
+                              <Skeleton width="160px" height="22px" borderRadius="4px" />
+                              <span className="profile_username">
+                                <Skeleton width="100px" height="16px" borderRadius="4px" style={{ marginTop: "6px" }} />
+                              </span>
+                              <span id="wallet" className="profile_wallet">
+                                <Skeleton width="260px" height="14px" borderRadius="4px" style={{ marginTop: "6px" }} />
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              Monica Lucas
+                              <span className="profile_username">@monicaaaa</span>
+                              <span id="wallet" className="profile_wallet">
+                                UDHUHWudhwd78wdt7edb32uidbwyuidhg7wUHIFUHWewiqdj87dy7
+                              </span>
+                              <button id="btn_copy" title="Copy Text">
+                                Copy
+                              </button>
+                            </>
+                          )}
                         </h4>
                       </div>
                     </div>
                   </div>
                   <div className="profile_follow de-flex">
                     <div className="de-flex-col">
-                      <div className="profile_follower">573 followers</div>
-                      <Link to="#" className="btn-main">
-                        Follow
-                      </Link>
+                      {loading ? (
+                        <>
+                          <Skeleton width="80px" height="16px" borderRadius="4px" />
+                          <Skeleton width="100px" height="36px" borderRadius="4px" style={{ marginTop: "10px" }} />
+                        </>
+                      ) : (
+                        <>
+                          <div className="profile_follower">573 followers</div>
+                          <Link to="#" className="btn-main">
+                            Follow
+                          </Link>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -55,7 +91,7 @@ const Author = () => {
 
               <div className="col-md-12">
                 <div className="de_tab tab_simple">
-                  <AuthorItems />
+                  <AuthorItems loading={loading} />
                 </div>
               </div>
             </div>
