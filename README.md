@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/banner.png" alt="Ultraverse NFT World" width="100%"/>
+</p>
+
 # NFT Marketplace — Frontend Simplified Virtual Internship
 
 A fully responsive NFT marketplace built as part of the [Frontend Simplified](https://frontendsimplified.com) virtual internship program. Simulates a real-world development workflow including component architecture, live API data, animations, dynamic routing, and team-based Git practices.
